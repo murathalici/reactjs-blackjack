@@ -14,6 +14,7 @@ const values = [
   "king",
   "ace",
 ];
+const RESHUFFLE_THRESHOLD = 0.75; // Reshuffle when 75% of the deck is used
 
 export const initializeDeck = () => {
   const newDeck = [];
@@ -29,20 +30,40 @@ export const initializeDeck = () => {
 };
 
 export const shuffleDeck = (deck) => {
-  for (let i = deck.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [deck[i], deck[j]] = [deck[j], deck[i]];
+  // Fisher-Yates (Knuth) Shuffle Algorithm
+  const fisherYatesShuffle = (deck) => {
+    for (let i = deck.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [deck[i], deck[j]] = [deck[j], deck[i]];
+    }
+  };
+
+  // Perform the Fisher-Yates shuffle multiple times to simulate thorough mixing
+  for (let i = 0; i < 3; i++) {
+    fisherYatesShuffle(deck);
   }
+
+  // Simulate a casino-style "cut"
+  const cutPoint =
+    Math.floor(Math.random() * (deck.length / 2)) + deck.length / 4;
+  const cutDeck = deck.splice(0, cutPoint);
+  deck.push(...cutDeck);
+
+  // Optionally perform an additional light shuffle to simulate the final cut
+  fisherYatesShuffle(deck);
+
   return deck;
 };
 
 export const drawCard = (deck) => {
   if (deck.length === 0) return null;
 
-  if (deck.length <= 208) {
-    // Reshuffle if the deck is halfway depleted (8 decks * 52 / 2 = 208)
-    const reshuffledDeck = shuffleDeck(initializeDeck());
-    return { card: reshuffledDeck.pop(), newDeck: reshuffledDeck };
+  const initialDeckSize = 8 * 52; // Assuming 8 decks, each with 52 cards
+  const remainingCardsPercentage = deck.length / initialDeckSize;
+
+  if (remainingCardsPercentage <= 1 - RESHUFFLE_THRESHOLD) {
+    // Reshuffle if the threshold is reached
+    deck = shuffleDeck(initializeDeck());
   }
 
   return { card: deck.pop(), newDeck: deck };

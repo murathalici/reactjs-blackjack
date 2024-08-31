@@ -14,7 +14,7 @@ const Game = () => {
     handleHit,
     handleStand,
     handleSplit,
-    canSplitOrDouble,
+    canSplitOrDouble, // Check this to determine if Split and Double buttons should be shown
     currentHand,
   } = useGame();
 
@@ -41,13 +41,13 @@ const Game = () => {
 
   return (
     <>
-      <div className="flex justify-between w-full max-w-4xl bg-white rounded-lg p-6 shadow-md">
-        <div className="w-1/2 text-center">
+      <div className="flex flex-col items-center w-full max-w-4xl p-6">
+        <div className="w-full text-center">
           <h2 className="text-xl font-bold mb-4 text-gray-800">
-            Dealer&apos;s Hand (
+            Dealer's Hand (
             {isDealerTurn
-              ? `Score: ${calculateScore(dealerCards)}`
-              : `Score: ${calculateScore([dealerCards[0]])}`}
+              ? `${calculateScore(dealerCards)}`
+              : `${calculateScore([dealerCards[0]])}`}
             )
           </h2>
           <div className="flex justify-center">
@@ -83,40 +83,44 @@ const Game = () => {
           </div>
         </div>
 
-        <div className="w-1/2 text-center">
-          <h2 className="text-xl font-bold mb-4 text-gray-800">
-            Your Hand (Score: {calculateScore(playerCards)})
-          </h2>
+        <div className="w-full text-center mt-6">
           <div className="flex justify-center">
-            {playerCards.map((card, index) => (
-              <img
-                key={index}
-                src={getCardImageUrl(card)}
-                alt={`${card.value} of ${card.suit}`}
-                className="w-24 h-36 m-2 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105"
-              />
-            ))}
+            <div className="w-full text-center">
+              <h2 className="text-xl font-bold mb-4 text-gray-800">
+                Your Hand ({calculateScore(playerCards)})
+              </h2>
+              <div className="flex justify-center">
+                {playerCards.map((card, index) => (
+                  <img
+                    key={index}
+                    src={getCardImageUrl(card)}
+                    alt={`${card.value} of ${card.suit}`}
+                    className="w-24 h-36 m-2 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105"
+                  />
+                ))}
+              </div>
+            </div>
+
+            {splitHand.length > 0 && (
+              <div className="w-full text-center ml-6">
+                <h2 className="text-xl font-bold mb-4 text-gray-800">
+                  Split Hand ({calculateScore(splitHand)})
+                </h2>
+                <div className="flex justify-center">
+                  {splitHand.map((card, index) => (
+                    <img
+                      key={index}
+                      src={getCardImageUrl(card)}
+                      alt={`${card.value} of ${card.suit}`}
+                      className="w-24 h-36 m-2 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       </div>
-
-      {splitHand.length > 0 && (
-        <div className="w-full max-w-4xl bg-white rounded-lg p-6 shadow-md mt-6">
-          <h2 className="text-xl font-bold mb-4 text-gray-800 text-center">
-            Split Hand (Score: {calculateScore(splitHand)})
-          </h2>
-          <div className="flex justify-center">
-            {splitHand.map((card, index) => (
-              <img
-                key={index}
-                src={getCardImageUrl(card)}
-                alt={`${card.value} of ${card.suit}`}
-                className="w-24 h-36 m-2 rounded-lg shadow-lg transform transition-transform duration-300 hover:scale-105"
-              />
-            ))}
-          </div>
-        </div>
-      )}
 
       <div className="mt-8 text-center">
         {gameOver ? (

@@ -33,8 +33,8 @@ function App() {
   useEffect(() => {
     if (gameOver) {
       setTimeout(() => {
-        startGame(); // Start a new game after 2 seconds
-      }, 2000);
+        startGame(); // Start a new game after 1 seconds
+      }, 1000);
     }
   }, [gameOver]);
 
@@ -190,11 +190,11 @@ function App() {
     setGameOver(true);
     setMessage(endMessage);
 
-    // Automatically start a new game after 2 seconds
+    // Automatically start a new game after 1 seconds
     setTimeout(() => {
       setGameOver(false);
       startGame(deck);
-    }, 2000);
+    }, 1000);
   };
 
   return (
